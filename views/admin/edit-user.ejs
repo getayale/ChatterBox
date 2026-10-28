@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit User | ChatterBox Admin</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      background: #f3f4f6;
+      color: #1f2937;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 32px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .header {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .error {
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 2px solid #bfdbfe;
+      border-color: #2563eb;
+    }
+
+    .help {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .permissions {
+      margin: 26px 0;
+      padding: 20px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .permissions h2 {
+      margin: 0 0 18px;
+      font-size: 17px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .checkbox-group input {
+      width: 17px;
+      height: 17px;
+      margin-top: 2px;
+      accent-color: #2563eb;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-group p {
+      margin: 5px 0 0;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: normal;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .primary {
+      color: #ffffff;
+      background: #2563eb;
+    }
+
+    .primary:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary {
+      color: #374151;
+      background: #e5e7eb;
+    }
+
+    .secondary:hover {
+      background: #d1d5db;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 22px 18px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Edit User</h1>
+      <p class="subtitle">
+        Update account details and permissions for
+        <strong><%= account.first_name %> <%= account.last_name %></strong>.
+      </p>
+    </header>
+
+    <% if (error) { %>
+      <div class="error" role="alert">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form
+      action="/admin/users/<%= account.id %>/edit"
+      method="POST"
+    >
+      <div class="form-group">
+        <label for="firstName">First name</label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          value="<%= account.first_name %>"
+          maxlength="100"
+          autocomplete="given-name"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last name</label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          value="<%= account.last_name %>"
+          maxlength="100"
+          autocomplete="family-name"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value="<%= account.email %>"
+          maxlength="255"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">New password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          minlength="8"
+          maxlength="72"
+          autocomplete="new-password"
+        >
+        <p class="help">
+          Leave blank to keep the current password. A new password must
+          be at least 8 characters and no more than 72 UTF-8 bytes.
+        </p>
+      </div>
+
+      <section class="permissions">
+        <h2>Account permissions</h2>
+
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="isMember"
+            name="isMember"
+            <%= account.is_member ? "checked" : "" %>
+          >
+          <div>
+            <label for="isMember">Club member</label>
+            <p>
+              Members can see the author names and posting dates
+              on the public message page.
+            </p>
+          </div>
+        </div>
+
+        <% if (account.is_admin) { %>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isAdmin"
+              name="isAdmin"
+              checked
+              disabled
+            >
+            <div>
+              <label for="isAdmin">Administrator</label>
+              <p>
+                Administrator privileges are protected and cannot
+                be changed through this form.
+              </p>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isAdmin"
+              name="isAdmin"
+            >
+            <div>
+              <label for="isAdmin">Administrator</label>
+              <p>
+                Administrators can manage users and access
+                the administration dashboard.
+              </p>
+            </div>
+          </div>
+        <% } %>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="button primary">
+          Save Changes
+        </button>
+
+        <a href="/admin/users" class="button secondary">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

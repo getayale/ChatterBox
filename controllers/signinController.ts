@@ -1,38 +1,62 @@
 
-import type { Request, Response, NextFunction } from "express";
-import bcrypt from "bcrypt";
-import pool from "../db/pool.js";
+import { Router } from "express";
+import type { Request, Response } from "express";
+import passport from "../config/passport.js";
 
-export const signinPost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, password } = req.body;
+const signinRouter = Router();
 
-    const result = await pool.query(
-      "SELECT id, email, password_hash FROM users WHERE email = $1",
-      [email]
-    );
+signinRouter.get("/", (req: Request, res: Response) => {
+  res.render("login", { error: null });
+});
 
-    if (result.rows.length === 0) {
-      return res.status(404).send("User with this email not found.");
+signinRouter.post("/", (req: Request, res: Response, next) => {
+  passport.authenticate(
+    "local",
+    (
+      err: Error | null,
+      user: Express.User | false,
+      info: { message?: string }
+    ) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        return res.status(401).render("login", {
+          error: info?.message ?? "Unable to sign in.",
+        });
+      }
+
+      req.logIn(user, (loginError) => {
+        if (loginError) {
+          return next(loginError);
+        }
+
+        if (user.isAdmin) {
+          return res.redirect("/admin");
+        }
+
+        return res.redirect("/dashboard");
+      });
+    }
+  )(req, res, next);
+});
+
+signinRouter.post("/logout", (req, res, next) => {
+  req.logout((error) => {
+    if (error) {
+      return next(error);
     }
 
-    const user = result.rows[0];
+    req.session.destroy((sessionError) => {
+      if (sessionError) {
+        return next(sessionError);
+      }
 
-    const passwordMatches = await bcrypt.compare(
-      password,
-      user.password_hash
-    );
+      res.clearCookie("connect.sid");
+      return res.redirect("/");
+    });
+  });
+});
 
-    if (!passwordMatches) {
-      return res.status(401).send("Incorrect password.");
-    }
-
-    res.send("Password verified successfully. Session login comes next.");
-  } catch (error) {
-    next(error);
-  }
-};
+export default signinRouter;

@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create User | ChatterBox Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      background: #f3f4f6;
+      color: #1f2937;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 32px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .header {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .error {
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 2px solid #bfdbfe;
+      border-color: #2563eb;
+    }
+
+    .help {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .primary {
+      color: #fff;
+      background: #2563eb;
+    }
+
+    .primary:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary {
+      color: #374151;
+      background: #e5e7eb;
+    }
+
+    .secondary:hover {
+      background: #d1d5db;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 22px 18px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Create User</h1>
+      <p class="subtitle">
+        Create a new ChatterBox account. The user can log in with
+        the email address and password you provide.
+      </p>
+    </header>
+
+    <% if (error) { %>
+      <div class="error" role="alert">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form action="/admin/users/new" method="POST">
+      <div class="form-group">
+        <label for="firstName">First name</label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          value="<%= formData.firstName %>"
+          maxlength="100"
+          autocomplete="given-name"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last name</label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          value="<%= formData.lastName %>"
+          maxlength="100"
+          autocomplete="family-name"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value="<%= formData.email %>"
+          maxlength="255"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Temporary password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          minlength="8"
+          maxlength="72"
+          autocomplete="new-password"
+          required
+        >
+        <p class="help">
+          Use at least 8 characters. The password will be hashed before
+          it is stored in the database.
+        </p>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="button primary">
+          Create User
+        </button>
+
+        <a href="/admin/users" class="button secondary">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
